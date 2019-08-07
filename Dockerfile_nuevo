@@ -1,0 +1,9 @@
+FROM redis  
+
+RUN apt-get update && \  
+apt-get install -y python curl wget vim gpg cron 
+ 
+RUN wget https://github.com/microsoft/OMS-Agent-for-Linux/releases/download/OMSAgent_v1.11.0-9/omsagent-1.11.0-9.universal.x64.sh && sh omsagent-1.11.0-9.universal.x64.sh --install -w a49d7700-5947-4340-a448-315545829734 -s FTwebE8Dqax9J3OfmpuLHZzbRKgF61F4hBCHNsWKVdrmjg8EFdaQ3J+q1hd9r/+FrhPA/XmCMsZCMp9MLV/uaw== -d opinsights.azure.com
+
+
+

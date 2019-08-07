@@ -1,0 +1,64 @@
+    esac
+done
+
+
+# Assemble parameters
+bundleParameters="--upgrade"
+if [ -n "$onboardID" ]; then
+    bundleParameters="${bundleParameters} -w $onboardID"
+fi
+if [ -n "$onboardKey" ]; then
+    bundleParameters="${bundleParameters} -s $onboardKey"
+fi
+if [ -n "$topLevelDomain" ]; then
+    bundleParameters="${bundleParameters} -d $topLevelDomain"
+fi
+if [ -n "$purgeAgent" ]; then
+    bundleParameters="--purge"
+fi
+if [ -n "$proxyConf" ]; then
+    bundleParameters="${bundleParameters} -p $proxyConf"
+fi
+
+# We need to use sudo for commands in the following block, if not running as root
+#SUDO=''
+#if [ "$EUID" != 0 ]; then
+#    SUDO='sudo'
+#fi
+
+# Download, install, and onboard OMSAgent for Linux, depending on architecture of machine
+if [ $(uname -m) = 'x86_64' ]; then
+    # x64 architecture
+    wget -O ${BUNDLE_X64} ${GITHUB_RELEASE}${BUNDLE_X64} && sh ./${BUNDLE_X64} ${bundleParameters}
+else
+    # x86 architecture
+    wget -O ${BUNDLE_X86} ${GITHUB_RELEASE}${BUNDLE_X86} && sh ./${BUNDLE_X86} ${bundleParameters}
+fi
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+~                                                                                                                                                                                                           
+                                                                                                                                                                                          103,2         Bot
+
+
+
+wget https://raw.githubusercontent.com/Microsoft/OMS-Agent-for-Linux/master/installer/scripts/onboard_agent.sh 
+
+&& sh omsagent-1.11.0-9.universal.x64.sh --install -w a49d7700-5947-4340-a448-315545829734 -s FTwebE8Dqax9J3OfmpuLHZzbRKgF61F4hBCHNsWKVdrmjg8EFdaQ3J+q1hd9r/+FrhPA/XmCMsZCMp9MLV/uaw== -d opinsights.azure.com
+
+
+
