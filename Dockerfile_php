@@ -4,7 +4,9 @@ FROM php:7.2.11-fpm
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        git \
+        wget \
+        vim \
+	git \
         libmemcached-dev \
         libz-dev \
         libpq-dev \
@@ -39,9 +41,14 @@ RUN php composer-setup.php
 RUN php -r "unlink('composer-setup.php');"
 
 # INSTALLING MAGENTO2
-RUN mkdir magento2
-RUN chown -R www-data:www-data /var/www/html/magento2/
-RUN chmod -R 755 /var/www/html/magento2/
+RUN wget https://github.com/magento/magento2/archive/2.3.2.tar.gz && \
+    tar -xzvf 2.3.2.tar.gz && \
+    chown -R www-data:www-data /var/www/html/magento2-2.3.2/ && \
+    chmod -R 755 /var/www/html/magento2-2.3.2/ && \
+    mv magento2-2.3.2/ magento2 && \
+    cd magento2
+    
+
 
 
 

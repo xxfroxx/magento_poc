@@ -16,7 +16,7 @@ spec:
         "beta.kubernetes.io/os": linux
       containers:
       - name: azure-vote-back
-        image: redis
+        image: farp32/magento/blablab redis
         resources:
           requests:
             cpu: 100m
