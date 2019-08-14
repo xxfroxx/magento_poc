@@ -1,0 +1,88 @@
+1# PHP install and SO update
+apt-get -y update && \
+apt-get install -y software-properties-common && \
+add-apt-repository -y ppa:ondrej/php && \
+apt-get -y update && \
+apt-get install -y php7.2-fpm php7.2-bcmath  php7.2-common php7.2-mbstring  php7.2-soap php7.2-gd php7.2-xml php7.2-intl php7.2-mysql php7.2-cli php7.2-zip php7.2-curl
+
+
+
+2# MYSQL
+apt-get install -y mysql-server mysql-client && \
+service mysql start && \
+echo "CREATE DATABASE magento2_db; GRANT ALL ON magento2_db.* TO 'magento2_usr'@'localhost' IDENTIFIED BY 'magento'" | mysql
+
+3# NGINX
+apt-get install -y nginx
+vim /etc/nginx/sites-available/magento
+
+* Add the following configuration:
+upstream fastcgi_backend {
+     server  unix:/run/php/php7.2-fpm.sock;
+ }
+
+ server {
+
+     listen 8080;
+     server_name localhost/magento2; #same as base-url on magento setup
+     set $MAGE_ROOT /var/www/html/magento2;
+     include /var/www/html/magento2/nginx.conf.sample;
+ }
+
+
+
+* Activate the newly created virtual host
+ln -s /etc/nginx/sites-available/magento /etc/nginx/sites-enabled
+
+* Verify that the syntax
+nginx -t
+
+* Restart NGINX
+systemctl restart nginx
+
+4# CREATE MAGENTO USER
+* Create a new user and group, which will be Magento file system owner
+  useradd -m -U -r -d /opt/magento magento -s /bin/bash && \
+
+* Add the magento user to the www-data group and change the /opt/magento directory permissions so that the Nginx can access the Magento installation:
+  usermod -a -G www-data magento && \
+  chmod 750 /opt/magento && \
+
+5# Downloading Magento2 binaries
+
+wget https://github.com/magento/magento2/archive/2.3.2.tar.gz && \
+tar -xzvf 2.3.2.tar.gz && \
+chown -R www-data:www-data /var/www/html/magento2-2.3.2/ && \
+chmod -R 775 /var/www/html/magento2-2.3.2/ && \
+mv magento2-2.3.2/ magento2 && \
+rm 2.3.2.tar.gz && \
+cd magento2 && \
+su magento
+
+
+6# Installing Composer globally.
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/bin --filename=composer && \
+#Update Magento dependencies:
+composer install -v
+
+7# Setup via CLI 
+* switch to magento user
+su magento
+php bin/magento setup:install --base-url=http://localhost/magento2 \
+--db-host=localhost \
+--db-name=magento2_db \
+--db-user=magento2_usr \
+--db-password=magento \
+--admin-firstname=admin \
+--admin-lastname=admin \
+--admin-email=admin@admin.com \
+--admin-user=admin \
+--admin-password=admin123 \
+--language=en_US \
+--currency=USD \
+--timezone=America/Chicago \
+--use-rewrites=1
+
+8# Make sure the permissions are OKAY
+chown -R www-data:www-data /var/www/html/magento2/ && \
+chmod -R 775 /var/www/html/magento2/

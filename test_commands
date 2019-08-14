@@ -1,0 +1,110 @@
+apt-get update && \
+    apt-get install -y --no-install-recommends \
+        wget \
+        vim \
+	git \
+        libmemcached-dev \
+        libz-dev \
+        libpq-dev \
+        libssl-dev libssl-doc libsasl2-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        zlib1g-dev libicu-dev g++ \
+        libldap2-dev libbz2-dev \
+        curl libcurl4-openssl-dev \
+        libenchant-dev libgmp-dev firebird-dev libib-util \
+        re2c libpng++-dev \
+        libwebp-dev libjpeg-dev libjpeg62-turbo-dev libpng-dev libvpx-dev libfreetype6-dev \
+        libmagick++-dev \
+        libmagickwand-dev \
+        zlib1g-dev libgd-dev \
+        libtidy-dev libxslt1-dev libmagic-dev libexif-dev file \
+        sqlite3 libsqlite3-dev libxslt-dev \
+        libmhash2 libmhash-dev libc-client-dev libkrb5-dev libssh2-1-dev \
+        unzip libpcre3 libpcre3-dev \
+        poppler-utils ghostscript libmagickwand-6.q16-dev libsnmp-dev libedit-dev libreadline6-dev libsodium-dev \
+        freetds-bin freetds-dev freetds-common libct4 libsybdb5 tdsodbc libreadline-dev librecode-dev libpspell-dev && \
+    
+
+    # Create a new user and group, which will be Magento file system owner
+    useradd -m -U -r -d /opt/magento magento -s /bin/bash && \
+
+    # Add the magento user to the www-data group and change the /opt/magento directory permissions so that the Nginx can access the Magento installation:
+    usermod -a -G www-data magento && \
+    chmod 750 /opt/magento && \
+
+    docker-php-ext-install bcmath ctype curl dom gd hash iconv intl mbstring \
+    pdo_mysql simplexml soap xsl zip sodium && \
+    
+    wget https://github.com/magento/magento2/archive/2.3.2.tar.gz && \
+    tar -xzvf 2.3.2.tar.gz && \
+    chown -R www-data:www-data /var/www/html/magento2-2.3.2/ && \
+    chmod -R 775 /var/www/html/magento2-2.3.2/ && \
+    mv magento2-2.3.2/ magento2 && \
+    rm 2.3.2.tar.gz && \
+    cd magento2 && \
+    su magento && \
+    
+
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php -r "if (hash_file('sha384', 'composer-setup.php') === 'a5c698ffe4b8e849a443b120cd5ba38043260d5c4023dbf93e1558871f1f07f58274fc6f4c93bcfd858c6bd0775cd8d1') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
+    php composer-setup.php && \
+    php -r "unlink('composer-setup.php');" && \
+    php composer.phar install --no-plugins --no-scripts
+
+
+apt-get install -y mysql-server mysql-client
+service mysql start
+mysql
+CREATE DATABASE magento;
+GRANT ALL ON magento.* TO 'magento'@'localhost' IDENTIFIED BY 'magento';
+EXIT;
+
+
+
+
+    # Create a new user and group, which will be Magento file system owner
+    useradd -m -U -r -d /opt/magento magento -s /bin/bash && \
+
+    # Add the magento user to the www-data group and change the /opt/magento directory permissions so that the Nginx can access the Magento installation:
+    usermod -a -G www-data magento && \
+    chmod 750 /opt/magento && \
+     
+    wget https://github.com/magento/magento2/archive/2.3.2.tar.gz && \
+    tar -xzvf 2.3.2.tar.gz && \
+    chown -R www-data:www-data /var/www/html/magento2-2.3.2/ && \
+    chmod -R 775 /var/www/html/magento2-2.3.2/ && \
+    mv magento2-2.3.2/ magento2 && \
+    rm 2.3.2.tar.gz && \
+    cd magento2 && \
+    su magento && \
+
+
+
+
+
+  php bin/magento setup:install \
+--base-url=http://localhost/magento2 \
+--db-host=localhost \
+--db-name=magento \
+--db-user=magento \
+--db-password=magento \
+--backend-frontname=admin \
+--admin-firstname=admin \
+--admin-lastname=admin \
+--admin-email=admin@admin.com \
+--admin-user=admin \
+--admin-password=admin123 \
+--language=en_US \
+--currency=USD \
+--timezone=America/Chicago \
+--use-rewrites=1
+    
+
+
+php bin/magento setup:install --base-url=http://localhost/magento2 --db-host=localhost --db-name=magento2_db --db-user=magento2_usr --db-password=magento --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1
+
+[SUCCESS]: Magento installation complete.
+[SUCCESS]: Magento Admin URI: /admin_nq8qph
+Nothing to import.
+
